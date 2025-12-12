@@ -1,1 +1,111 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>SCADA – Inclinaison Avion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 30px;
+    }
+
+    .panel {
+      max-width: 500px;
+      margin: auto;
+      background: #020617;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0,255,255,0.15);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+
+    .value {
+      font-size: 22px;
+      margin: 12px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 14px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 12px;
+      font-size: 20px;
+    }
+
+    .NORMAL {
+      background: #064e3b;
+      color: #34d399;
+    }
+
+    .WARNING {
+      background: #78350f;
+      color: #fbbf24;
+    }
+
+    .DANGER {
+      background: #7f1d1d;
+      color: #f87171;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="panel">
+    <h2>SCADA – Inclinaison Avion</h2>
+
+    <div class="value"><span>Roll (X)</span><span id="x">0°</span></div>
+    <div class="value"><span>Pitch (Y)</span><span id="y">0°</span></div>
+    <div class="value"><span>Yaw (Z)</span><span id="z">0°</span></div>
+
+    <div id="etat" class="status NORMAL">NORMAL</div>
+  </div>
+
+<script>
+let t = 0;
+
+function simulationSCADA() {
+  const roll  = Math.sin(t) * 30;
+  const pitch = Math.cos(t) * 20;
+  const yaw   = (t * 15) % 360;
+  t += 0.05;
+
+  document.getElementById("x").innerText = roll.toFixed(2) + "°";
+  document.getElementById("y").innerText = pitch.toFixed(2) + "°";
+  document.getElementById("z").innerText = yaw.toFixed(2) + "°";
+
+  let etat = "NORMAL";
+  if (Math.abs(roll) >= 25 || Math.abs(pitch) >= 25) {
+    etat = "DANGER";
+  } else if (Math.abs(roll) >= 12 || Math.abs(pitch) >= 12) {
+    etat = "WARNING";
+  }
+
+  const e = document.getElementById("etat");
+  e.innerText = etat;
+  e.className = "status " + etat;
+}
+
+setInterval(simulationSCADA, 200);
+</script>
+
+</body>
+</html>
